@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from '../_services/Authentication.service';
+import { AlertifyService } from '../_services/alertify.service';
 
 @Component({
   selector: 'app-navigation',
@@ -9,29 +10,29 @@ import { AuthenticationService } from '../_services/Authentication.service';
 export class NavigationComponent implements OnInit {
 
   model: any = {};
-  localStorageAccessTokenName: string = 'access_token';
+  localStorageAccessTokenName = 'access_token';
 
-  constructor(private authService: AuthenticationService) { }
+  constructor(public authService: AuthenticationService, private alertify: AlertifyService) { }
 
   ngOnInit() {
   }
 
   login() {
     this.authService.login(this.model).subscribe(data => {
-      console.log('logged in successfully');
+      this.alertify.success('logged in successfully');
     }, error => {
-      console.log('failed to log in');
+      console.log(error)
+      this.alertify.error(error);
     });
   }
 
   logout() {
     this.authService.userToken = null;
     localStorage.removeItem(this.localStorageAccessTokenName);
-    console.log('logged out');
+    this.alertify.message('logged out');
   }
 
   loggedIn() {
-    const token = localStorage.getItem(this.localStorageAccessTokenName);
-    return !!token;
+    return this.authService.loggedIn();
   }
 }

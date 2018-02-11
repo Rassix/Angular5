@@ -4,11 +4,14 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
 import { Observable } from 'rxjs/Observable';
+import { tokenNotExpired, JwtHelper } from 'angular2-jwt';
 
 @Injectable()
 export class AuthenticationService {
     baseUrl = 'http://localhost:14479/api/auth';
     userToken: any;
+    decodedToken: any;
+    jwtHelper: JwtHelper = new JwtHelper();
 
     constructor(private http: Http) { }
 
@@ -17,6 +20,8 @@ export class AuthenticationService {
             const user = response.json();
             if (user) {
                 localStorage.setItem('access_token', user.access_token);
+                this.decodedToken = this.jwtHelper.decodeToken(user.access_token)
+                console.log(this.decodedToken)
                 this.userToken = user.access_token;
             }
         }).catch(this.handleError);
@@ -24,6 +29,10 @@ export class AuthenticationService {
 
     register(model: any) {
         return this.http.post(this.baseUrl + '/register', model, this.requestOptions()).catch(this.handleError);
+    }
+
+    loggedIn() {
+        return tokenNotExpired('access_token')
     }
 
     private requestOptions() {
@@ -49,4 +58,6 @@ export class AuthenticationService {
         }
         return Observable.throw(modelStateErrors || 'Server error');
     }
+
+
 }
