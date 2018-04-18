@@ -58,6 +58,4 @@ export class AuthenticationService {
         }
         return Observable.throw(modelStateErrors || 'Server error');
     }
-
-
 }
