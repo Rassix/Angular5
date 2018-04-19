@@ -20,8 +20,8 @@ export class AuthenticationService {
             const user = response.json();
             if (user) {
                 localStorage.setItem('access_token', user.access_token);
-                this.decodedToken = this.jwtHelper.decodeToken(user.access_token)
-                console.log(this.decodedToken)
+                this.decodedToken = this.jwtHelper.decodeToken(user.access_token);
+                console.log(this.decodedToken);
                 this.userToken = user.access_token;
             }
         }).catch(this.handleError);
@@ -32,7 +32,7 @@ export class AuthenticationService {
     }
 
     loggedIn() {
-        return tokenNotExpired('access_token')
+        return tokenNotExpired('access_token');
     }
 
     private requestOptions() {
@@ -44,14 +44,14 @@ export class AuthenticationService {
         const applicationError = error.headers.get('Application-Error');
 
         if (applicationError) {
-            return Observable.throw(applicationError)
+            return Observable.throw(applicationError);
         }
 
         const serverError = error.json();
         let modelStateErrors = '';
         if (serverError) {
-            for(const key in serverError) {
-                if(serverError[key]) {
+            for (const key in serverError) {
+                if (serverError[key]) {
                     modelStateErrors += serverError[key] + '\n';
                 }
             }
@@ -59,3 +59,4 @@ export class AuthenticationService {
         return Observable.throw(modelStateErrors || 'Server error');
     }
 }
+
